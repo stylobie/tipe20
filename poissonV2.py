@@ -1,3 +1,6 @@
+#version qui marche, il y a seulement un petit souci,
+#le prochain mouv renvoie des nan (Not A Number) pour les poissons qui n'intéragissent avec personne. 
+#A régler.
 import numpy as np
 import math
 from random import uniform
