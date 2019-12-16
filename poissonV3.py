@@ -1,12 +1,12 @@
-#cette version est bugée
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Dec 10 11:49:03 2019
+Created on Mon Dec 16 18:58:25 2019
 
 @author: serban
 """
+
+
 import numpy as np
 import math
 from random import uniform
@@ -46,19 +46,13 @@ def quiEstAutour(positions,numeroDePoisson) :
    return listeAutour
 
 
-def correctionModulo(x, y) :
-    borneX = ((tailleEspace[0])/2) 
-    borneY = ((tailleEspace[1])/2)
-    for i in range(len(x)) :
-        if x[i] > borneX : 
-            x[i] = - borneX
-        if x[i] < - borneX :
-            x[i] = borneX
-        if y[i] > borneY : 
-            y[i] = -borneY
-        if y[i] < - borneY :
-            y[i] = borneY
-    return (x, y)
+def correctionModulo(x) :
+    borne = ((tailleEspace[0])/2)
+    if x > borne : 
+        x = - borne
+    if x < - borne :
+        x = borne
+    return x
 
 
 def calculerProchainMouv(positions, angles):
@@ -71,17 +65,16 @@ def calculerProchainMouv(positions, angles):
             anglesProches += [angles[val]]
         dtangles[i] = np.mean(anglesProches) + uniform(-numax, numax)
         x = positions[i][0] + vitesse*dt*(math.cos(dtangles[i]))
+        x=correctionModulo(x)
         y = positions[i][1] + vitesse*dt*(math.sin(dtangles[i]))
-        dtpositions = correctionModulo(x, y)
-        #dtpositions[i][0] = x
-        #dtpositions[i][1] = y
-    #dtpositions = correctionModulo(dtpositions[:][0], dtpositions[:][1])
+        y=correctionModulo(y)
+        dtpositions[i][0] = x
+        dtpositions[i][1] = y
     return (dtpositions,dtangles)
 
 # initialisation
 
 positions_initiales = [
-    (0.0,0.0)
     (2.0,8.0),
     (3.0,7.0), (4.0,8.0), (1.0,1.0), (8.0,5.0),
     (6.0,2.0), (5.0,-4.0), (11.0,1.0), (-8.0,5.0), (0.0,5.0),
@@ -92,7 +85,7 @@ angles_initiaux = [
     -pi/4, -pi, -pi/2, -pi/2, -pi/4,
     ]
 
-nombreIterations = 100
+nombreIterations = 2000
 
 positions_as_mat_list = []
 
@@ -110,17 +103,16 @@ for i in range(len(angles)):
     angles_as_array[i] = angles[i]
 current_angles = angles_as_array
 
-for i in range(nombreIterations):
-    previous = positions_as_mat_list[i]
+for num_iter in range(nombreIterations):
+    previous = positions_as_mat_list[num_iter]
     result = calculerProchainMouv(previous, current_angles)
     positions_as_mat_list.append(result[0])
     current_angles = result[1]
     
-for i in range(nombreIterations):
-    current = positions_as_mat_list[i]
+for num_iter in range(nombreIterations):
+    current = positions_as_mat_list[num_iter]
     plt.plot(current[:,0],current[:,1],"o", label="pas de ligne")
 
 plt.show()
 
   
-
